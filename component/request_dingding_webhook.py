@@ -11,6 +11,7 @@
         ]
     }
 }
+参考文档: https://developers.dingtalk.com/document/app/custom-robot-access
 """
 import json
 
@@ -27,7 +28,8 @@ def request_dingding_webhook(access_token, title="", content="", at_mobiles=[]):
             "text": content
         },
         "at": {
-            "atMobiles": at_mobiles
+            "atMobiles": at_mobiles,
+            "isAtAll": False
         }
     }
     headers = {'content-type': 'application/json'}

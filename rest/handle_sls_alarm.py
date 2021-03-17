@@ -58,26 +58,27 @@ def handle_sls_alarm():
             global owner_2_phone
             global owner_2_name
             owner_code = service_2_owner[service_name][0]
-            service_owner_name = owner_2_name[owner_code]
             owner_phone = owner_2_phone[owner_code]
             if owner_phone not in at_mobiles:
                 at_mobiles.append(owner_phone)
+            service_owner_name = "@%s" % owner_phone
 
             msg_template_details += "| %s        | %s        | %s\n\n" % (
                 service_display_name, exception_count, service_owner_name)
         title = msg_template_prefix
         msg_template_details = title + "\n" + msg_template_details
         logger.debug(msg_template_details)
-        if is_at != 1:
+        if is_at != str(1):
             at_mobiles = []
-    except:
+    except BaseException as e:
         import traceback, sys
         traceback.print_exc()  # 打印异常信息
         exc_type, exc_value, exc_traceback = sys.exc_info()
         error = str(repr(traceback.format_exception(exc_type, exc_value, exc_traceback)))
 
         msg_template_details = error
-    dingding_resp = request_dingding_webhook.request_dingding_webhook(dingding_webhook_access_token, "服务",
+    print(at_mobiles)
+    dingding_resp = request_dingding_webhook.request_dingding_webhook(dingding_webhook_access_token, "服务异常日志",
                                                                       msg_template_details, at_mobiles)
     logger.debug(dingding_resp)
     return ""
