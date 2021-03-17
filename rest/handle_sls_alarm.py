@@ -38,7 +38,7 @@ def handle_sls_alarm():
     raw_result_count = request_data["RawResultCount"]
     msg_template_prefix = "%s~%s %s个服务:\n" % (start_time, end_time, raw_result_count)
     raw_results = request_data["RawResults"]
-    msg_template_details = "| 服务名称 | 异常次数 | 项目负责人 |\n" + "| -------- | -------- | ---------- |\n"
+    msg_template_details = "| 服务名称 | 异常次数 | 项目负责人 |\n\n" + "| -------- | -------- | ---------- |\n\n"
     at_mobiles = []
     for item in raw_results:
         service_name = item["service"]
@@ -62,7 +62,7 @@ def handle_sls_alarm():
         if owner_phone not in at_mobiles:
             at_mobiles.append(owner_phone)
 
-        msg_template_details += "| %s        | %s        | %s          |\n" % (
+        msg_template_details += "| %s        | %s        | %s\n\n" % (
             service_display_name, exception_count, service_owner_name)
     title = msg_template_prefix
     msg_template_details = title + "\n" + msg_template_details
