@@ -11,6 +11,9 @@ owner_2_phone:
 # 钉钉webhook配置
 dingding_webhook_access_token:
   - 1
+# 错误日志-最大容忍次数
+serious_error:
+  maximum_tolerance_count: 50
 # 服务归属人
 owner_2_service:
   1:

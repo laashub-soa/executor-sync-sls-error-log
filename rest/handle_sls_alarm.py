@@ -17,6 +17,7 @@ service_2_owner = {}
 owner_2_service = config.app_conf["owner_2_service"]
 owner_2_phone = config.app_conf["owner_2_phone"]
 owner_2_name = config.app_conf["owner_2_name"]
+serious_error_maximum_tolerance_count = config.app_conf["serious_error"]["maximum_tolerance_count"]
 for (owner, service_list) in owner_2_service.items():
     for service_name in service_list:
         if not service_2_owner.__contains__(service_name):
@@ -60,7 +61,11 @@ def handle_sls_alarm():
             owner_code = service_2_owner[service_name][0]
             owner_phone = owner_2_phone[owner_code]
             if owner_phone not in at_mobiles:
-                at_mobiles.append(owner_phone)
+                if is_at != str(1):
+                    if exception_count >= serious_error_maximum_tolerance_count:
+                        at_mobiles.append(owner_phone)
+                else:
+                    at_mobiles.append(owner_phone)
             service_owner_name = "@%s" % owner_phone
 
             msg_template_details += "| %s        | %s        | %s\n\n" % (
@@ -68,8 +73,6 @@ def handle_sls_alarm():
         title = msg_template_prefix
         msg_template_details = title + "\n" + msg_template_details
         logger.debug(msg_template_details)
-        if is_at != str(1):
-            at_mobiles = []
     except BaseException as e:
         import traceback, sys
         traceback.print_exc()  # 打印异常信息
@@ -77,7 +80,6 @@ def handle_sls_alarm():
         error = str(repr(traceback.format_exception(exc_type, exc_value, exc_traceback)))
 
         msg_template_details = error
-    print(at_mobiles)
     dingding_resp = request_dingding_webhook.request_dingding_webhook(dingding_webhook_access_token, "服务异常日志",
                                                                       msg_template_details, at_mobiles)
     logger.debug(dingding_resp)
